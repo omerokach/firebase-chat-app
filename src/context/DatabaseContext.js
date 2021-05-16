@@ -1,47 +1,51 @@
 import React, { useContext, useState, useEffect } from "react";
 import firebase from "firebase";
 import "firebase/firestore";
-const firestore = firebase.firestore();
-const storage = firebase.storage();
+import "firebase/storage";
+import app from "../firebase";
 const DatabaseContext = React.createContext();
 
 export function useDB() {
   return useContext(DatabaseContext);
 }
 
-export function DataBaseProvider({ children }) {
-  const massagesRef = firestore.collection("messages");
-  const usersRef = firestore.collection("users");
-  const storageRef = storage.ref("users/");
+const db = app.firestore();
 
-  const getMessages = async (chatRoom) => {
-    const messages = await massagesRef
-      .where("chat_room_id", "==", chatRoom.id)
-      .get();
-    return messages;
+export function DataBaseProvider({ children }) {
+  const massagesRef = db.collection("messages");
+  const usersRef = db.collection("users");
+
+  const getMessages = (chatRoomId) => {
+    return massagesRef.where("chat_room_id", "==", chatRoomId).orderBy('created_at');
   };
 
   const addUserProfileImg = async (email, imgfile) => {
     try {
-      const res = await firebase.storage().ref("users/" + `${email}-profile.jpg`).put(imgfile);
-      console.log('uploaded successfuly');
+      const res = await app
+        .storage()
+        .ref("users/" + `${email}-profile.jpg`)
+        .put(imgfile);
+      console.log("uploaded successfuly");
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  const getUserFromStore = async (user) => {
-    const res  = await usersRef.where("email",'==',user.email).get();
-    return res
-  }
+  const getUserFromStore = async (userEmail) => {
+    const res = await usersRef.where("email", "==", userEmail).get();
+    return res;
+  };
 
   const getUserProfileImg = async (user) => {
-      try {
-          const imgUrl = await firebase.storage().ref("users/" + `${user.email}-profile.jpg`).getDownloadURL();
-          return imgUrl
-      } catch (error) {
-          console.log(error.message);
-      }
+    try {
+      const imgUrl = await app
+        .storage()
+        .ref("users/" + `${user.email}-profile.jpg`)
+        .getDownloadURL();
+      return imgUrl;
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const signupUserOnStore = async (user) => {
@@ -52,12 +56,24 @@ export function DataBaseProvider({ children }) {
     console.log(res);
   };
 
+  const addMessage = (message, chatroom_id, name) => {
+      console.log(message, chatroom_id, name);
+    const newMessage = {
+      sender: name,
+      chat_room_id: chatroom_id,
+      created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      text: message,
+    };
+    massagesRef.add(newMessage);
+  };
+
   const value = {
     signupUserOnStore,
     getUserProfileImg,
     addUserProfileImg,
     getMessages,
-    getUserFromStore
+    getUserFromStore,
+    addMessage,
   };
 
   return (

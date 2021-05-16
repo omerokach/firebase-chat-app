@@ -1,5 +1,6 @@
 import React from "react";
 import Signup from "./Signup";
+import '../app.css'
 import Dashboard from "./Dashboard";
 import { Container } from "react-bootstrap";
 import { AuthProvider } from "../context/AuthContext";
