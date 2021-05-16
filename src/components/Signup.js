@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useDB } from "../context/DatabaseContext";
 
 const Signup = () => {
   const emailRef = useRef();
@@ -9,6 +10,8 @@ const Signup = () => {
   const passwordConfirmRef = useRef();
   const userNameRef = useRef();
   const { signup } = useAuth();
+  const { signupUserOnStore, addUserProfileImg, getUserProfileImg } = useDB();
+  const [imgFile, setImgFile] = useState()
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -22,7 +25,10 @@ const Signup = () => {
     try {
       setError("");
       setLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value);
+      const res = await signup(emailRef.current.value, passwordRef.current.value);
+      await addUserProfileImg(emailRef.current.value, imgFile);
+      const user = {email: emailRef.current.value, name: userNameRef.current.value}
+      signupUserOnStore(user);
       history.push('/')
     } catch (error) {
       console.log(error);
@@ -64,6 +70,13 @@ const Signup = () => {
                 type="password"
                 ref={passwordConfirmRef}
                 required
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group id="profile-picture">
+              <Form.Label>Choose profile picture</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={(e) => setImgFile(e.target.files[0])}
               ></Form.Control>
             </Form.Group>
             <Button disabled={loading} className="w-100" type="submit">
