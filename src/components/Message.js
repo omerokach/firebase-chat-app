@@ -17,7 +17,7 @@ function Message({ message }) {
       <img
         className="profile-img"
         src={user.imgUrl}
-        style={{ maxWidth: "100", maxHeight: "3vh" }}
+        style={{ width: "100px", height: "100px" }}
       ></img>
       <p>{message.text}</p>
       <footer>{user.name}</footer>

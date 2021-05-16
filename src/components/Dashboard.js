@@ -60,7 +60,7 @@ function Dashboard(props) {
             <img
               className="profile-img"
               src={user.imgUrl}
-              style={{ maxWidth: "400px", maxHeight: "10vh" }}
+              style={{ width: "50px", height: "50px" }}
             ></img>
           </div>
           {chatRoomsArray &&

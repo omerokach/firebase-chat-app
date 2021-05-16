@@ -4,6 +4,9 @@
   margin: 1rem 1rem;
   object-fit: cover;
 }
+img{
+  object-fit: cover;
+}
 .profile-details {
   display: flex;
   align-items: center;
