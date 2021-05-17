@@ -4,8 +4,10 @@
   margin: 1rem 1rem;
   object-fit: cover;
 }
-img{
+img {
   object-fit: cover;
+  width: 2rem;
+  height: 2rem;
 }
 .profile-details {
   display: flex;
@@ -13,24 +15,52 @@ img{
   justify-content: center;
 }
 .message {
+  font-size: 14px;
   border: solid 1px hsl(0, 0%, 0%, 0.2);
   border-radius: 3rem;
   display: flex;
   align-items: center;
   margin: 1rem;
+  width: fit-content;
+  block-size: fit-content;
+  margin-left: 28.5%;
 }
 .chatroom-card {
   border: solid 2px black;
   min-height: 600px;
+  /* width: 120%; */
 }
 #chat-room-text-input {
-  position:relative;
+  position: relative;
   bottom: 0;
 }
 
-.chat-board{
+.chat-board {
   overflow-y: scroll;
 }
 
-.me-sender {
+.my-message {
+  right: 0;
+  border: solid 1px hsl(0, 0%, 0%, 0.2);
+  border-radius: 3rem;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin: 1rem;
+  margin-left:0;
+  max-width: 90%;
+}
+.msg-container {
+  padding: 1rem;
+  /* inline-size: 80%; */
+  inline-size: 10rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+.chat-room-navbar {
+  background-color: #d8e2dc;
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
 }

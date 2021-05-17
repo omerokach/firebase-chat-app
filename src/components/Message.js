@@ -4,8 +4,16 @@ import { useDB } from "../context/DatabaseContext";
 
 function Message({ message }) {
   const [user, setUser] = useState("");
+  const [messageClass, setMessageClass] = useState('');
   const { currentUser, logout } = useAuth();
   const { getUserFromStore } = useDB();
+  console.log(currentUser.email);
+  console.log(user.email);
+  console.log(message.senderEmail);
+  useEffect(()=> {
+    currentUser.email === message.senderEmail ?  setMessageClass('my-message') : setMessageClass('');
+  },[])
+  
 
   useEffect(async () => {
     const userFromStore = await getUserFromStore(currentUser.email);
@@ -13,14 +21,24 @@ function Message({ message }) {
   }, []);
 
   return (
-    <div className="message">
-      <img
-        className="profile-img"
-        src={user.imgUrl}
-        style={{ width: "100px", height: "100px" }}
-      ></img>
-      <p>{message.text}</p>
-      <footer>{user.name}</footer>
+    <div className={`message ${messageClass}`}>
+      {
+        messageClass === 'my-message' ? 
+        <>
+        <div className='msg-container'>
+        <strong>{message.sender}:</strong> {message.text}
+        </div>
+        <img className="profile-img" src={message.imgUrl}></img>
+        </>
+        :
+        <>
+        <img className="profile-img" src={message.imgUrl}></img>
+        <div className='msg-container'>
+        {message.text}  <strong>:{message.sender}</strong>
+        </div>
+        </>
+        
+      }
     </div>
   );
 }

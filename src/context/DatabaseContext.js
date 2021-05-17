@@ -16,7 +16,9 @@ export function DataBaseProvider({ children }) {
   const usersRef = db.collection("users");
 
   const getMessages = (chatRoomId) => {
-    return massagesRef.where("chat_room_id", "==", chatRoomId).orderBy('created_at');
+    return massagesRef
+      .where("chat_room_id", "==", chatRoomId)
+      .orderBy("created_at");
   };
 
   const addUserProfileImg = async (email, imgfile) => {
@@ -56,16 +58,33 @@ export function DataBaseProvider({ children }) {
     console.log(res);
   };
 
-  const addMessage = (message, chatroom_id, name) => {
-      console.log(message, chatroom_id, name);
+  const addMessage = (message, chatroom_id, name, imgUrl, senderEmail) => {
+    console.log(message, chatroom_id, name);
     const newMessage = {
       sender: name,
+      senderEmail: senderEmail,
       chat_room_id: chatroom_id,
+      imgUrl: imgUrl,
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       text: message,
     };
     massagesRef.add(newMessage);
   };
+
+  const findChatRoomById = async (chatRoomId) => {
+    return db.collection('messages').where('chat_room_id', '==', chatRoomId).limit(1).get();
+}
+
+const getChatRooms = () => {
+  return db.collection('chatRooms');
+}
+
+const addChatRoom = (chatRoomId ) => {
+  const newChatRoom = {
+    chat_room_id: chatRoomId
+  }
+  return db.collection('chatRooms').add(newChatRoom);
+}
 
   const value = {
     signupUserOnStore,
@@ -74,6 +93,9 @@ export function DataBaseProvider({ children }) {
     getMessages,
     getUserFromStore,
     addMessage,
+    findChatRoomById,
+    addChatRoom,
+    getChatRooms
   };
 
   return (

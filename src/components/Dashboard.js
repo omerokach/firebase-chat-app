@@ -4,17 +4,20 @@ import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useDB } from "../context/DatabaseContext";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 import ChatRoom from "./ChatRoom";
 
 function Dashboard(props) {
   const roomToAddRef = useRef();
-  const roomtoFindRef = useRef();
+  const roomToFindRef = useRef();
   const [error, setError] = useState("");
+  const [chatRoomLink, setChatRoomLink] = useState('')
+  const [chatRoomAddedLink, setChatRoomAddedLink] = useState('')
   const { currentUser, logout } = useAuth();
-  const { getUserFromStore } = useDB();
-  const [chatRoomsArray, setChatRoomsArray] = useState([]);
+  const { getUserFromStore, findChatRoomById, addChatRoom,getChatRooms } = useDB();
+  const [chatRoomsfromStore] = useCollectionData(getChatRooms());
+  console.log(chatRoomsfromStore);
   const [user, setUser] = useState("");
-  console.log(chatRoomsArray);
   useEffect(async () => {
     const userFromStore = await getUserFromStore(currentUser.email);
     userFromStore.forEach((user) => setUser(user.data()));
@@ -31,23 +34,31 @@ function Dashboard(props) {
     }
   };
 
-  const deleteRoom = (roomIndex) => {
-    let roomArray = [...chatRoomsArray];
-    roomArray = roomArray.splice(roomIndex,1)
-    setChatRoomsArray(roomArray);
-  };
-
-  const addChatRoom = () => {
-    if (chatRoomsArray.length === 5) {
-      return setError("Max rooms is 5");
+  const addNewChatRoom = async () => {
+    for(const room of chatRoomsfromStore){
+      if(room['chat_room_id'] === roomToAddRef.current.value){
+        return setError("Chat room name already exist");
+      }
     }
     setError("");
-    console.log(roomToAddRef.current.value);
-    console.log(roomToAddRef);
-    setChatRoomsArray((prev) => [...prev, roomToAddRef.current.value]);
+    const res = await addChatRoom(roomToAddRef.current.value);
+    setChatRoomAddedLink('Go to room: ' + roomToAddRef.current.value)
   };
 
-  const findRoom = () => {};
+  const findRoom =async  () => {
+    setError('')
+    const res = await findChatRoomById(roomToFindRef.current.value);
+    let exist;
+    const action = await res.forEach((result) => exist = result.data());
+    console.log(exist);
+    if(!exist){
+      setChatRoomLink('');
+      setError('No chat room with that name has found');
+    }else{
+      setError('');
+      setChatRoomLink('Go to room: ' + roomToFindRef.current.value);
+    }
+  };
 
   return (
     <>
@@ -63,17 +74,6 @@ function Dashboard(props) {
               style={{ width: "50px", height: "50px" }}
             ></img>
           </div>
-          {chatRoomsArray &&
-            chatRoomsArray.map((chatRoom, i) => (
-              <div className="text-center mb-4">
-                <Link to={`/chat-room?id=${chatRoom}`} key={i}>
-                  Chat room: {chatRoom}
-                </Link>
-                <Button onClick={() => deleteRoom(i)}>
-                  Delete
-                </Button>
-              </div>
-            ))}
           <InputGroup className="mb-3">
             <FormControl
               ref={roomToAddRef}
@@ -82,14 +82,14 @@ function Dashboard(props) {
               aria-describedby="basic-addon2"
             />
             <InputGroup.Append>
-              <Button onClick={addChatRoom} variant="outline-secondary">
+              <Button onClick={addNewChatRoom } variant="outline-secondary">
                 Add room
               </Button>
             </InputGroup.Append>
           </InputGroup>
           <InputGroup className="mb-3">
             <FormControl
-              ref={roomtoFindRef}
+              ref={roomToFindRef}
               placeholder="Chat-room"
               aria-label="Recipient's username"
               aria-describedby="basic-addon2"
@@ -100,6 +100,8 @@ function Dashboard(props) {
               </Button>
             </InputGroup.Append>
           </InputGroup>
+          {chatRoomLink && <Alert variant="success"><Link to={`/chat-room?id=${roomToFindRef.current.value}`}>{chatRoomLink}</Link></Alert>}
+          {chatRoomAddedLink && <Alert variant="success"><Link to={`/chat-room?id=${roomToAddRef.current.value}`}>{chatRoomAddedLink}</Link></Alert>}
         </Card.Body>
       </Card>
       <div className="w-100 text-center mt-2">
