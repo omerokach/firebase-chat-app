@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import firebase from "firebase";
 import "firebase/firestore";
 import "firebase/storage";
@@ -25,7 +25,7 @@ export function DataBaseProvider({ children }) {
     try {
       const res = await app
         .storage()
-        .ref("users/" + `${email}-profile.jpg`)
+        .ref(`users/${email}-profile.jpg`)
         .put(imgfile);
       console.log("uploaded successfuly");
     } catch (error) {
@@ -72,19 +72,23 @@ export function DataBaseProvider({ children }) {
   };
 
   const findChatRoomById = async (chatRoomId) => {
-    return db.collection('messages').where('chat_room_id', '==', chatRoomId).limit(1).get();
-}
+    return db
+      .collection("messages")
+      .where("chat_room_id", "==", chatRoomId)
+      .limit(1)
+      .get();
+  };
 
-const getChatRooms = () => {
-  return db.collection('chatRooms');
-}
+  const getChatRooms = () => {
+    return db.collection("chatRooms");
+  };
 
-const addChatRoom = (chatRoomId ) => {
-  const newChatRoom = {
-    chat_room_id: chatRoomId
-  }
-  return db.collection('chatRooms').add(newChatRoom);
-}
+  const addChatRoom = (chatRoomId) => {
+    const newChatRoom = {
+      chat_room_id: chatRoomId,
+    };
+    return db.collection("chatRooms").add(newChatRoom);
+  };
 
   const value = {
     signupUserOnStore,
@@ -95,7 +99,7 @@ const addChatRoom = (chatRoomId ) => {
     addMessage,
     findChatRoomById,
     addChatRoom,
-    getChatRooms
+    getChatRooms,
   };
 
   return (

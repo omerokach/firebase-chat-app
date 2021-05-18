@@ -20,7 +20,7 @@ function ChatRoom(props) {
   const history = useHistory();
   const { currentUser, logout } = useAuth();
   const { getMessages, addMessage, getUserFromStore } = useDB();
-  const roomId = props.location.search.match(/(?<=\=).+/)[0];
+  const roomId = props.location.search.match(/(?<==).+/)[0];
   //   const roomId = props.location.search.replace(/\D/g, "");
   const [user, setUser] = useState("");
 

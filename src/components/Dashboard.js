@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useDB } from "../context/DatabaseContext";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import ChatRoom from "./ChatRoom";
 
 function Dashboard(props) {
   const roomToAddRef = useRef();
