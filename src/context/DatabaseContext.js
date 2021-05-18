@@ -3,6 +3,7 @@ import firebase from "firebase";
 import "firebase/firestore";
 import "firebase/storage";
 import app from "../firebase";
+import { v4 as uuidv4 } from 'uuid';
 const DatabaseContext = React.createContext();
 
 export function useDB() {
@@ -83,11 +84,20 @@ export function DataBaseProvider({ children }) {
     return db.collection("chatRooms");
   };
 
-  const addChatRoom = (chatRoomId) => {
+  const getChatRoomByName = (chatRoomName) => { 
+    return db.collection("chatRooms").where("chat_room_name","==",chatRoomName).limit(1).get();
+  }
+
+  const addChatRoom = (chatRoomId, creatorEmail, roomPassword, allowUsersArr) => {
+    const roomId = uuidv4();
     const newChatRoom = {
-      chat_room_id: chatRoomId,
+      chat_room_name: chatRoomId,
+      chat_room_id: roomId,
+      admin: creatorEmail,
+      password: roomPassword,
+      users: allowUsersArr
     };
-    return db.collection("chatRooms").add(newChatRoom);
+    return db.collection("chatRooms").doc(roomId).set(newChatRoom);
   };
 
   const value = {
@@ -100,6 +110,7 @@ export function DataBaseProvider({ children }) {
     findChatRoomById,
     addChatRoom,
     getChatRooms,
+    getChatRoomByName
   };
 
   return (
