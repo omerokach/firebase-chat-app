@@ -60,7 +60,6 @@ export function DataBaseProvider({ children }) {
   };
 
   const addMessage = (message, chatroom_id, name, imgUrl, senderEmail) => {
-    console.log(message, chatroom_id, name);
     const newMessage = {
       sender: name,
       senderEmail: senderEmail,
@@ -69,6 +68,7 @@ export function DataBaseProvider({ children }) {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       text: message,
     };
+    console.log(newMessage);
     massagesRef.add(newMessage);
   };
 

@@ -7,9 +7,6 @@ function Message({ message }) {
   const [messageClass, setMessageClass] = useState("");
   const { currentUser, logout } = useAuth();
   const { getUserFromStore } = useDB();
-  console.log(currentUser.email);
-  console.log(user.email);
-  console.log(message.senderEmail);
   useEffect(() => {
     currentUser.email === message.senderEmail
       ? setMessageClass("my-message")

@@ -16,7 +16,7 @@ import { useHistory } from "react-router";
 function ChatRoom(props) {
   const [isUserAllowed, setIsUserAllowed] = useState(false);
   const [uiError, setUiError] = useState("");
-  const [ifUserExist, setIfUserExist] = useState(false)
+  const [ifUserExist, setIfUserExist] = useState(false);
   const [error, setError] = useState("");
   const [roomPass, setRoomPass] = useState();
   const textRef = useRef();
@@ -32,40 +32,44 @@ function ChatRoom(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(roomPass !== passwordRef.current.value){
-      setError('Inccorect password')
+    if (roomPass !== passwordRef.current.value) {
+      setError("Inccorect password");
       setTimeout(() => {
-        setError('')
-      }, 2000)
-    }else{
-      setIsUserAllowed(true); 
+        setError("");
+      }, 2000);
+    } else {
+      setIsUserAllowed(true);
     }
   };
 
   useEffect(async () => {
     let res = await getChatRoomByName(roomId);
     let room = "";
-    res.forEach((roomFromStore) => (room = roomFromStore.data()));
-    if(!room){
-      return setUiError('Sorry no room with that name')
-    }
-    setRoomPass(room.password);
-    const userFromStore = await getUserFromStore(roomId);
+    console.log(currentUser.email);
+    const userFromStore = await getUserFromStore(currentUser.email);
     userFromStore.forEach((user) => {
       setUser(user.data());
     });
+    res.forEach((roomFromStore) => (room = roomFromStore.data()));
+    if (!room) {
+      return setUiError("Sorry no room with that name");
+    }
+    console.log(user);
+    setRoomPass(room.password);
     let ifUserExist = room.users.includes(currentUser.email);
     if (!ifUserExist) {
       return setUiError("You are not alowed to enter the room, get invtation");
     }
+    
   }, []);
 
   const [messages, loading] = useCollectionData(getMessages(roomId));
+
   useEffect(() => {
-    if (isUserAllowed) {
+    if(isUserAllowed){
       dummy.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [isUserAllowed, messages]);
 
   const sendMessage = (e) => {
     e.preventDefault();
@@ -98,9 +102,7 @@ function ChatRoom(props) {
             <h2 className="text-center mb-4">Log In to chatroom</h2>
             {uiError ? (
               <>
-              <Alert variant="danger">
-                {uiError}{" "}
-              </Alert>
+                <Alert variant="danger">{uiError} </Alert>
                 <Button className="w-15 m-2" onClick={handleChangeRoom}>
                   Change-room
                 </Button>
