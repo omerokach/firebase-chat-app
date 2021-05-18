@@ -72,10 +72,10 @@ export function DataBaseProvider({ children }) {
     massagesRef.add(newMessage);
   };
 
-  const findChatRoomById = async (chatRoomId) => {
+  const findChatRoomById = async (chatRoomName) => {
     return db
-      .collection("messages")
-      .where("chat_room_id", "==", chatRoomId)
+      .collection("chat_room_name")
+      .where("chat_room_name", "==", chatRoomName)
       .limit(1)
       .get();
   };

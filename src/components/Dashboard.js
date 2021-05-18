@@ -90,7 +90,6 @@ function Dashboard(props) {
     setChatRoomAddedLink("Go to room: " + roomToAddRef.current.value);
     setUserInvitedArray([]);
     const invationUrl = `${document.location.host}/chat-room?id=${roomToAddRef.current.value}`;
-    console.log(invationUrl);
     setChatRoomAddedLink(invationUrl);
     // setShow(false);
   };
@@ -222,7 +221,7 @@ function Dashboard(props) {
               </Form>
               {chatRoomAddedLink && (
                 <Alert variant="success">
-                  <p>password to the room: {roomToAddPassRef}</p> 
+                  <p>password to the room: {roomToAddPassRef.current.value}</p> 
                   Link for invatation: {chatRoomAddedLink}
                   <button
                     onClick={() => {
